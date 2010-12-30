@@ -1,0 +1,12 @@
+hotspot_evil
+
+This is a library that exposes the internals of Oracle (Sun)'s HotSpot VM.
+It uses unverifiable bytecode sequences to do some really evil stuff, like
+reinterpret_cast<>, memory address/dereference, accessing non-visible symbols,
+and the like.
+
+Most funtionality is only known to work on Oracle HotSpot VM.
+
+Use JRuby 1.4.0/BiteScript 0.0.5 to generate *.class files from *.java files.
+The *.java files in src/ruby directory are actually JRuby source files.
+

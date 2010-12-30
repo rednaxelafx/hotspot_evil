@@ -1,0 +1,82 @@
+== What is hotspot_evil all about?
+
+It's about bypassing bytecode verification, to gain some abilities that were
+forbidden by JVMS (Java Virtual Machine Specification).
+Such abilities include:
+  unlimited access priviledge
+  type unsafety
+  memory dereference / pointer arithmetics
+  HotSpot internals
+
+== What does JVM's bytecode verification do?
+
+Please refer to JSR 202's documentation. In short, during class loading, a JVM
+has to perform class file format checking and bytecode verification to ensure
+program safety. Bytecode verification makes sure that there are no malformed
+control flow, no violation of type safety, and that the specified attributes
+are all valid, such as max_stack/locals/args_size/code_length.
+
+== How to get around bytecode verification?
+
+In HotSpot VM, there's a special "backdoor" class,
+sun.reflect.MagicAccessorImpl, whose subclasses will not be verified by
+default, unless -Xverify:all is specified.
+It was so designed to support a new reflection implementation since JDK 1.4
+(-XX:+UseNewReflection).
+
+http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4474172
+
+-XX:+UseNewReflection (set to true in product since JDK 1.4)
+-XX:-VerifyReflectionBytecodes (set to false in product since JDK 1.4)
+
+Interestingly, because Oracle JRockit and IBM J9 licensed their JDK from Sun
+(now Oracle), their reflection implementation is affected by changes in Sun's
+JDK. So this backdoor also exists in JRockit and can be exploited. But in J9,
+access to this backdoor is somehow restricted.
+
+== Use primitive type wrappers to do memory dereferencing
+
+== How unsafe is hotspot_evil?
+
+There are roughly three levels of unsafety here:
+
+1. Pretty much safe.
+  
+  The operations that only cracks symbol visibility is pretty much safe to use
+  in both HotSpot and JRockit. After all, that's exactly how reflection is
+  implemented in both VMs.
+
+2. Works with HotSpot's interpreter only.
+  
+  The operations that smuggles around types are only valid to use in HotSpot's
+  interpreter. Although we've managed to bypass bytecode verification, the JIT
+  compilers will still have to find out type information in programs, and they
+  will either bailout or crash some later time due to type inconsistency.
+  
+  JRockit's JIT (non-optimizing) compiler uses a different calling convention
+  and stack frame layout than HotSpot's interpreter, so even in this mode
+  the operations mentioned in this section still won't return desired results.
+  
+  It is especially bad to fool the VM about whether a piece of data is an
+  reference or a primitive, because it has to keep track of GC maps (oop
+  maps in HotSpot speak, or livemaps in JRockit speak). So even if such code
+  gets loaded and compiled, it might still cause trouble later during GC.
+
+3. Not meant to work at all.
+  
+  The operations that directly pokes HotSpot's internal data structures are
+  inherently unsafe and unstable. They're there just for fun. Don't take them
+  seriously.
+
+== Why use *.java file extension on Ruby source files?
+
+Because it's fun ^_^
+
+Nah, the real reason is I want the resulting *.class file to have their
+SourceFile attribute end with the "*.java" extension, so that people who don't
+know what hotspot_evil is would get confused about how such exotic operations
+can be done in pure Java (the language).
+
+Of course, if you're reading this, you're already smart enough to know that
+it's all just bytecode tricks.
+

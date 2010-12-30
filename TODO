@@ -1,0 +1,34 @@
+Add pointer width detection in hotspot.evil.RuntimeProperties. But HOW?
+
+Actually what we need here is a _reliable_ way to detect the size of object
+headers across 32bit/64bit/64bit_with_CompressedOops HotSpot configurations,
+including possible paddings.
+The current implementation in hotspot.evil.util.Unsafes is tested and known
+to work on the following JVMs:
+
+java version "1.6.0_23"
+Java(TM) SE Runtime Environment (build 1.6.0_23-b05)
+Java HotSpot(TM) 64-Bit Server VM (build 19.0-b09, mixed mode)
+(works with -XX:+UseCompressedOops or -XX:-UseCompressedOops)
+
+java version "1.6.0_20"
+Java(TM) SE Runtime Environment (build 1.6.0_20-b02)
+Oracle JRockit(R) (build R28.0.1-21-133393-1.6.0_20-20100512-2126-linux-x86_64, compiled mode)
+(-XXcompressedRefs:enable=true|false)
+
+java version "1.6.0"
+Java(TM) SE Runtime Environment (build pxa6460sr8fp1-20100624_01(SR8 FP1))
+IBM J9 VM (build 2.4, JRE 1.6.0 IBM J9 2.4 Linux amd64-64 jvmxa6460sr8ifx-20100609_59383 (JIT enabled, AOT enabled)
+J9VM - 20100609_059383
+JIT  - r9_20100401_15339ifx2
+GC   - 20100308_AA)
+JCL  - 20100624_01
+
+java version "1.6.0"
+Java(TM) SE Runtime Environment (build pxa6460sr8fp1-20100624_01(SR8 FP1))
+IBM J9 VM (build 2.4, JRE 1.6.0 IBM J9 2.4 Linux amd64-64 jvmxa6460sr8ifx-20100609_59383 (JIT enabled, AOT enabled)
+J9VM - 20100609_059383
+JIT  - r9_20100401_15339ifx2
+GC   - 20100308_AA_CMPRSS)
+JCL  - 20100624_01
+
