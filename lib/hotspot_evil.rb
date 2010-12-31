@@ -3,9 +3,11 @@ require 'java'
 module HotSpotEvil
   class << self
     def detect_hotspot_bits
-      java.lang.management.ManagementFactory.runtimeMXBean.vmName =~ /^Java HotSpot\(TM\) (\d+)-Bit (\w+) VM$/
-      raise 'This library is only known to work with HotSpot VM' unless $1
-      $1.to_i
+      java.lang.management.ManagementFactory.runtimeMXBean.vmName =~
+        /^Java HotSpot\(TM\) (?:(\d+)-Bit )?(\w+) VM$/
+      raise 'This library is only known to work with HotSpot VM' unless $2
+      return $1.to_i if $1
+      32
     end
   end
   

@@ -1,12 +1,86 @@
-hotspot_evil
+= hotspot_evil
+
+== DESCRIPTION:
 
 This is a library that exposes the internals of Oracle (Sun)'s HotSpot VM.
+
 It uses unverifiable bytecode sequences to do some really evil stuff, like
 reinterpret_cast<>, memory address/dereference, accessing non-visible symbols,
 and the like.
 
-Most funtionality is only known to work on Oracle HotSpot VM.
+Most functionalities are only known to work on Oracle HotSpot VM.
 
-Use JRuby 1.4.0/BiteScript 0.0.5 to generate *.class files from *.java files.
-The *.java files in src/ruby directory are actually JRuby source files.
+== SYNOPSIS:
 
+In Java:
+  
+  import hotspot.evil.*;
+  import hotspot.evil.util.*;
+
+  public class Test {
+      public static void main(String[] args) {
+          Integer i = new Integer(123456);
+          long a = Address.of(i);
+          int intValue = Dereference.int32(a + Unsafes.getObjectHeaderSize());
+          assert intValue == i.intValue() : "should be the same value";
+          assert ReinterpretCast.toLong(2.0) == 0x4000000000000000L;
+      }
+  }
+
+== REQUIREMENTS:
+
+* Java SE 6 JDK (specifically the ones from Oracle/Sun, containing HotSpot VM)
+* JRuby 1.4.0 or higher
+* BiteScript 0.0.5 or higher
+
+Make sure the "jruby" and "javac" commands are in $PATH or otherwise available
+in shell.
+
+Uses JRuby 1.5.0/BiteScript 0.0.5 to generate *.class files from *.java files.
+The *.java files in src/ruby directory are actually JRuby source files. See
+doc/design_notes for more details.
+
+== DOWNLOAD SOURCES:
+
+  git clone git://github.com/rednaxelafx/hotspot_evil.git
+
+== BUILD:
+
+  cd hotspot_evil
+  rake
+
+If all goes well, the command line output should be like the following:
+
+$ rake
+(in hotspot_evil)
+jruby 1.4.0 (ruby 1.8.7 patchlevel 174) (2009-11-02 69fbfa3) (Java HotSpot(TM)
+Client VM 1.6.0_23) [x86-java]
+mkdir -p D:/temp/hotspot_evil/bin
+cd D:/temp/hotspot_evil/src/java
+rm D:/temp/hotspot_evil/bin/compile.log
+cd D:/temp/hotspot_evil/src/ruby
+compiled Address.java
+compiled Dereference.java
+compiled MarkWord.java
+compiled ReinterpretCast.java
+
+The *.class files will be generated in the bin directory. To use this library,
+add the this bin directory to the classpath of the target Java program.
+
+== KNOWN ISSUES:
+
+There are problems building on Windows, namely JRuby 1.4.0's launcher *.bat
+files have bugs with paths, where as JRuby 1.5.3's "system" method have bugs
+so that it doesn't execute the command given. A workaround is to install both
+versions of JRuby, copy the "jruby.*" files from 1.5.3's bin directory to
+1.4.0's, and then put 1.4.0's bin on %PATH% to make it the current JRuby on
+command line.
+
+== LICENSE:
+
+3-clause BSD license
+
+== AUTHOR:
+
+Kris "RednaxelaFX" Mok
+http://rednaxelafx.javaeye.com

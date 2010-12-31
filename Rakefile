@@ -14,7 +14,7 @@ task :build_all => [:verify_env, :build_from_java, :build_from_ruby]
 
 desc 'Verify all dependencies are met'
 task :verify_env do
-  `jruby -v`
+  puts `jruby -v`
   require 'rubygems'
   require 'bitescript'
   mkdir_p OUTDIR
@@ -26,17 +26,16 @@ task :build_from_ruby => [:verify_env, :build_from_java] do
   Dir.glob('**/*.java').sort.each do |f|
     system "jruby -J-cp #{OUTDIR} #{f} #{OUTDIR} && echo 'compiled #{f}'"
   end
-  cd BASEDIR
 end
 
 desc 'Build classes from Java source files'
 task :build_from_java do
   cd SRCDIR_JAVA
-  system "javac -classpath #{OUTDIR} -d #{OUTDIR} -g #{Dir.glob('**/*.java').join(' ')}"
-  cd BASEDIR
+  compile_log = File.join OUTDIR, 'compile.log'
+  system "javac -classpath #{OUTDIR} -d #{OUTDIR} -g -Xstdout #{compile_log} #{Dir.glob('**/*.java').join(' ')}"
+  rm compile_log
 end
 
 task :clean do
   rm_rf OUTDIR
 end
-

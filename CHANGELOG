@@ -1,7 +1,8 @@
+2010-12-31: Updated readme, added license, and a few minor bug fixes.
+
 2010-12-29: Implemented a few basic functionalities:
   * Address.of(Object):
       Gets the begin address of an object.
-      Doesn't work with -XX:+UseCompressedOops yet.
   * Dereference
       Dereferences an memory address to get data of the specified width.
   * ReinterpretCast
