@@ -6,11 +6,11 @@ import sun.misc.Unsafe;
 
 public class Unsafes {
     public static final Unsafe INSTANCE;
-    
+
     static {
         INSTANCE = getUnsafe();
     }
-    
+
     private static Unsafe getUnsafe() {
         Unsafe unsafe = null;
         try {
@@ -22,7 +22,7 @@ public class Unsafes {
         }
         return unsafe;
     }
-    
+
     public static int getObjectHeaderSize() {
         // java.lang.Integer's sole instance field is:
         //   private int value

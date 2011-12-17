@@ -41,29 +41,29 @@ access to this backdoor is somehow restricted.
 There are roughly three levels of unsafety here:
 
 1. Pretty much safe.
-  
+
   The operations that only cracks symbol visibility is pretty much safe to use
   in both HotSpot and JRockit. After all, that's exactly how reflection is
   implemented in both VMs.
 
 2. Works with HotSpot's interpreter only.
-  
+
   The operations that smuggles around types are only valid to use in HotSpot's
   interpreter. Although we've managed to bypass bytecode verification, the JIT
   compilers will still have to find out type information in programs, and they
   will either bailout or crash some later time due to type inconsistency.
-  
+
   JRockit's JIT (non-optimizing) compiler uses a different calling convention
   and stack frame layout than HotSpot's interpreter, so even in this mode
   the operations mentioned in this section still won't return desired results.
-  
+
   It is especially bad to fool the VM about whether a piece of data is an
   reference or a primitive, because it has to keep track of GC maps (oop
   maps in HotSpot speak, or livemaps in JRockit speak). So even if such code
   gets loaded and compiled, it might still cause trouble later during GC.
 
 3. Not meant to work at all.
-  
+
   The operations that directly pokes HotSpot's internal data structures are
   inherently unsafe and unstable. They're there just for fun. Don't take them
   seriously.

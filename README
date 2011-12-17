@@ -13,7 +13,7 @@ Most functionalities are only known to work on Oracle HotSpot VM.
 == SYNOPSIS:
 
 In Java:
-  
+
   import hotspot.evil.*;
   import hotspot.evil.util.*;
 

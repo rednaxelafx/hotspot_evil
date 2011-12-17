@@ -16,7 +16,7 @@ public enum Endian {
             return LITTLE;
         }
     };
-    
+
     public static Endian current() {
         String endianStr = System.getProperty("sun.cpu.endian");
         if ("little".equals(endianStr)) {
@@ -27,18 +27,18 @@ public enum Endian {
             return UNKNOWN;
         }
     }
-    
+
     public Endian reverse() {
         return UNKNOWN;
     }
-    
+
     public int convertFrom(int origValue, Endian srcEndian) {
         if (this == srcEndian.reverse()) {
             return reverseEndian(origValue);
         }
         return origValue;
     }
-    
+
     private static int reverseEndian(int value) {
         return ( value               << 24)
              | ((value & 0x00FF0000) >> 8)
