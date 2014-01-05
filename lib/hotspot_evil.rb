@@ -10,7 +10,7 @@ module HotSpotEvil
       32
     end
   end
-  
+
   HOTSPOT_BITS = detect_hotspot_bits
 end
 
